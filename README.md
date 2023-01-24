@@ -4,8 +4,9 @@
 
 ```
 1. git clone https://github.com/aklebba-gd/GridU-Unit-Testing-capstone
-2. cd date-master
+2. cd GridU-Unit-Testing-capstone
 3. npm install
+4. npx jest --coverage
 ```
 
 ## Requirements:
