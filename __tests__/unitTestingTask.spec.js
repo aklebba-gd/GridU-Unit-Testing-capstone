@@ -1,147 +1,147 @@
 const unitTestingTask = require("../unitTestingTask");
 
-describe("unitTestingTask", () => {
-  const mockDate = new Date("March 13, 08 04:20");
+const mockDate = new Date("2022-02-03T06:03:05.005Z");
 
-  it("should throw an error if called with no arguments", () => {
-    expect(() => unitTestingTask()).toThrow("Argument `format` must be a string");
-  });
-
-  it("should throw an error if called with empty string as first argument  (format)", () => {
-    expect(() => unitTestingTask("", mockDate)).toThrow("Argument `format` must be a string");
-  });
-
-  it("should throw an error if called with number as first argument  (format)", () => {
-    expect(() => unitTestingTask(42, mockDate)).toThrow("Argument `format` must be a string");
-  });
-
-  it("should throw an error if called with object as first argument (format)", () => {
-    expect(() => unitTestingTask({ string: "randomString" }, mockDate)).toThrow(
-      "Argument `format` must be a string"
-    );
-  });
-
-  it("should not throw an error if called with string as first argument (format)", () => {
-    expect(() => unitTestingTask("en", mockDate)).not.toThrow("Argument `format` must be a string");
-  });
-
-  it("should not throw an error if called without second argument (date)", () => {
-    expect(() => unitTestingTask("YY")).not.toThrow();
-  });
-
-  it("should throw an error if called with object as second argument (date)", () => {
-    expect(() => unitTestingTask("YY", { name: "someName" })).toThrow();
-  });
-});
-
-describe("unitTestingTask with en language", () => {
+describe("unitTestingTask en language", () => {
   beforeAll(() => {
     unitTestingTask.lang("en");
   });
 
-  const mockDate = new Date("2022-02-03T06:03:05.005Z");
-
   it("should have en as current language", () => {
     expect(unitTestingTask.lang()).toBe("en");
   });
+});
 
-  it("should return full year", () => {
-    expect(unitTestingTask("YYYY", mockDate)).toBe("2022");
+describe("unitTestingTask with correct arguments", () => {
+  it("should not throw an error if called with string as first argument", () => {
+    expect(() => unitTestingTask("en", mockDate)).not.toThrow();
   });
 
-  it("should return last 2 digits of the year", () => {
-    expect(unitTestingTask("YY", mockDate)).toBe("22");
+  it("should not throw an error if called without second argument", () => {
+    expect(() => unitTestingTask("YY")).not.toThrow();
+  });
+});
+
+describe("unitTestingTask with incorrect arguments", () => {
+  it("should throw an error if called with no arguments", () => {
+    expect(() => unitTestingTask()).toThrow("Argument `format` must be a string");
   });
 
-  it("should return full name of the month", () => {
-    expect(unitTestingTask("MMMM", mockDate)).toBe("February");
+  it("should throw an error if called with empty string as first argument", () => {
+    expect(() => unitTestingTask("", mockDate)).toThrow("Argument `format` must be a string");
   });
 
-  it("should return short name of the month", () => {
-    expect(unitTestingTask("MMM", mockDate)).toBe("Feb");
+  it("should throw an error if called with number as first argument", () => {
+    expect(() => unitTestingTask(42, mockDate)).toThrow("Argument `format` must be a string");
   });
 
-  it("should return 2-digit month", () => {
-    expect(unitTestingTask("MM", mockDate)).toBe("02");
+  it("should throw an error if called with object as first argument", () => {
+    expect(() => unitTestingTask({ string: "randomString" }, mockDate)).toThrow();
   });
 
-  it("should return digit of the month", () => {
-    expect(unitTestingTask("M", mockDate)).toBe("2");
+  it("should throw an error if called with object as second argument", () => {
+    expect(() => unitTestingTask("YY", { name: "someName" })).toThrow();
+  });
+});
+
+describe("unitTestingTask year format", () => {
+  it.concurrent.each([
+    ["YYYY", "2022"],
+    ["YY", "22"],
+  ])("for format %s should return %s", (format, expected) => {
+    expect(unitTestingTask(format, mockDate)).toBe(expected);
+  });
+});
+
+describe("unitTestingTask month format", () => {
+  it.concurrent.each([
+    ["MMMM", "February"],
+    ["MMM", "Feb"],
+    ["MM", "02"],
+    ["M", "2"],
+  ])("for format %s should return %s", (format, expected) => {
+    expect(unitTestingTask(format, mockDate)).toBe(expected);
+  });
+});
+
+describe("unitTestingTask day format", () => {
+  it.concurrent.each([
+    ["DDD", "Thursday"],
+    ["DD", "Thu"],
+    ["D", "Th"],
+    ["dd", "03"],
+    ["d", "3"],
+  ])("for format %s should return %s", (format, expected) => {
+    expect(unitTestingTask(format, mockDate)).toBe(expected);
+  });
+});
+
+describe("unitTestingTask hour format", () => {
+  it.concurrent.each([
+    ["HH", "07"],
+    ["H", "7"],
+  ])("for format %s should return %s", (format, expected) => {
+    expect(unitTestingTask(format, mockDate)).toBe(expected);
   });
 
-  it("should return full name of the day", () => {
-    expect(unitTestingTask("DDD", mockDate)).toBe("Thursday");
+  it.concurrent.each([
+    ["hh", "04"],
+    ["h", "4"],
+  ])("for format %s should return %s", (format, expected) => {
+    const pmHourMockDate = new Date("2022-02-03T15:03:05.005Z");
+    expect(unitTestingTask(format, pmHourMockDate)).toBe(expected);
+  });
+});
+
+describe("unitTestingTask minute format", () => {
+  it.concurrent.each([
+    ["mm", "03"],
+    ["m", "3"],
+  ])("for format %s should return %s", (format, expected) => {
+    expect(unitTestingTask(format, mockDate)).toBe(expected);
+  });
+});
+
+describe("unitTestingTask second format", () => {
+  it.concurrent.each([
+    ["ss", "05"],
+    ["s", "5"],
+  ])("for format %s should return %s", (format, expected) => {
+    expect(unitTestingTask(format, mockDate)).toBe(expected);
+  });
+});
+
+describe("unitTestingTask milisecond format", () => {
+  it.concurrent.each([
+    ["ff", "005"],
+    ["f", "5"],
+  ])("for format %s should return %s", (format, expected) => {
+    expect(unitTestingTask(format, mockDate)).toBe(expected);
+  });
+});
+
+describe("unitTestingTask AM/PM format", () => {
+  it.concurrent.each([
+    ["A", "AM"],
+    ["a", "am"],
+  ])("for format %s should return %s", (format, expected) => {
+    expect(unitTestingTask(format, mockDate)).toBe(expected);
   });
 
-  it("should return first 3 letters of the day name", () => {
-    expect(unitTestingTask("DD", mockDate)).toBe("Thu");
+  it.concurrent.each([
+    ["A", "PM"],
+    ["a", "pm"],
+  ])("for format %s should return %s", (format, expected) => {
+    const pmHourMockDate = new Date("2022-02-03T15:03:05.005Z");
+    expect(unitTestingTask(format, pmHourMockDate)).toBe(expected);
   });
+});
 
-  it("should return first 2 letters of the day name", () => {
-    expect(unitTestingTask("D", mockDate)).toBe("Th");
-  });
-
-  it("should return always 2-digits number of the day", () => {
-    expect(unitTestingTask("dd", new Date(2022, 1, 1))).toBe("01");
-  });
-
-  it("should return number of the day", () => {
-    expect(unitTestingTask("d", new Date(2022, 1, 1))).toBe("1");
-  });
-
-  it("should return always 2-digits hour", () => {
-    expect(unitTestingTask("HH", mockDate)).toBe("07");
-  });
-
-  it("should return hour", () => {
-    expect(unitTestingTask("H", mockDate)).toBe("7");
-  });
-
-  it("should return always 2-digit hour in 12 hour format", () => {
-    expect(unitTestingTask("hh", new Date("2022-02-03T18:03:05.005Z"))).toBe("07");
-  });
-
-  it("should return hour in 12 hour format", () => {
-    expect(unitTestingTask("h", new Date("2022-02-03T18:03:05.005Z"))).toBe("7");
-  });
-
-  it("should return always 2-digit minute", () => {
-    expect(unitTestingTask("mm", mockDate)).toBe("03");
-  });
-
-  it("should return minute", () => {
-    expect(unitTestingTask("m", mockDate)).toBe("3");
-  });
-
-  it("should return always 2-digit second", () => {
-    expect(unitTestingTask("ss", mockDate)).toBe("05");
-  });
-
-  it("should return second", () => {
-    expect(unitTestingTask("s", mockDate)).toBe("5");
-  });
-
-  it("should return always 3-digit milisecond", () => {
-    expect(unitTestingTask("ff", mockDate)).toBe("005");
-  });
-
-  it("should return milisecond", () => {
-    expect(unitTestingTask("f", mockDate)).toBe("5");
-  });
-
-  it("should return 'AM' if it's before noon and 'PM' otherwise", () => {
-    expect(unitTestingTask("A", mockDate)).toBe("AM");
-  });
-
-  it("should return 'am' if it's before noon and 'pm' otherwise", () => {
-    expect(unitTestingTask("a", mockDate)).toBe("am");
-  });
-
-  it("should return time zone in '+0100' format", () => {
-    expect(unitTestingTask("ZZ", mockDate)).toBe("+0100");
-  });
-
-  it("should return time zone in '+01:00' format", () => {
-    expect(unitTestingTask("Z", mockDate)).toBe("+01:00");
+describe("unitTestingTask timezone format", () => {
+  it.concurrent.each([
+    ["ZZ", "+0100"],
+    ["Z", "+01:00"],
+  ])("for format %s should return time zone in %s format", (format, expected) => {
+    expect(unitTestingTask(format, mockDate)).toBe(expected);
   });
 });
